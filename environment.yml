@@ -4,6 +4,6 @@
   # - defaults  
 dependencies:
   # - python=3.11.6
-  - conda-forge::tensorflow=2.12.1
+  - conda-forge::tensorflow-cpu=2.12.1
   - pip:
       - streamlit==1.38.0
