@@ -1,2 +1,5 @@
+channels:
+  - conda-forge  # Include conda-forge channel
+  - defaults  
 dependencies:
   - tensorflow=2.12.1
