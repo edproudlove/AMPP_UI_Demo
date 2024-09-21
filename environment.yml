@@ -1,7 +1,7 @@
-channels:
-  - anaconda
-  - conda-forge  # Include conda-forge channel
-  - defaults  
+# channels:
+  # - anaconda
+  # - conda-forge  # Include conda-forge channel
+  # - defaults  
 dependencies:
-  - streamlit=1.38.0
-  - tensorflow=2.12.1
+  - streamlit
+  - conda-forge::tensorflow=2.12.1
