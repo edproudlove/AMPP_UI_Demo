@@ -1,0 +1,2 @@
+dependencies:
+  - tensorflow=2.12.1
