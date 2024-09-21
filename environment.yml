@@ -3,6 +3,7 @@
   # - conda-forge  # Include conda-forge channel
   # - defaults  
 dependencies:
-  - python=3.11.6
-  - streamlit
+  # - python=3.11.6
   - conda-forge::tensorflow=2.12.1
+  - pip:
+      - streamlit==1.38.0
