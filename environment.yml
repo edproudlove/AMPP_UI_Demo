@@ -1,4 +1,3 @@
-name: ML_indiv_proj_v2
 channels:
   - anaconda
   - conda-forge
@@ -282,4 +281,3 @@ dependencies:
       - streamlit==1.38.0
       - tenacity==8.5.0
       - toml==0.10.2
-prefix: /Users/ethan/miniforge3/envs/ML_indiv_proj_v2
