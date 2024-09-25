@@ -1,7 +1,7 @@
-#File with stuff that can be imported into the UI code
+#Utils file with stuff that can be imported into the UI code
 import numpy as np
 
-#I think this should be a function that everyhting can use 
+#Depreciated - I think this should be a function that everyhting can use 
 def calcReynoldsAndBLThickness(temp, u, d):
     #Function calcaultes density, viscosity and Reynolds number for given Temp, veolocity and dimeter:
     density = 753.596 + 1.87748 * temp - 0.003564 * np.power(temp, 2.0)
@@ -12,7 +12,7 @@ def calcReynoldsAndBLThickness(temp, u, d):
 
     return [Re, BL_thickness,density, viscosity]
 
-
+#Bascailly a wrapper for the DNN to have the scaler in too
 class CorrosionPredictor():
     def __init__(self, model, x_scaler, y_scaler=None, input_params=None):
         self.model = model
@@ -20,15 +20,12 @@ class CorrosionPredictor():
         self.y_scaler = y_scaler
         self.input_params = input_params
 
-    def predict(self, P, T, d, v, ph):
-        #Function that can get a model prediction from input data
+    def dept_predict(self, P, T, d, v, ph):
+        #Old function that can get a model prediction from input data
         Re, BL_thickness,density, viscosity = calcReynoldsAndBLThickness(T, v, d)
         input_data = np.array([P, T, Re, BL_thickness, density, viscosity])
         input_data_trasnformed = self.x_scaler.transform(input_data.reshape(1, -1))
         pred = self.model.predict(input_data_trasnformed, verbose = 0)[0][0]
-
-        # print(input_data)
-        # print(input_data_trasnformed)
 
         self.pred = pred
         return pred
@@ -38,9 +35,6 @@ class CorrosionPredictor():
         input_data = np.array([ph, T+273.15, np.log10(v), np.log10(P), np.log10(d)])
         input_data_trasnformed = self.x_scaler.transform(input_data.reshape(1, -1))
         pred = self.model.predict(input_data_trasnformed, verbose = 0)[0][0]
-
-        # print(input_data)
-        # print(input_data_trasnformed)
 
         self.pred = pred
         return pred

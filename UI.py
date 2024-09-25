@@ -2,7 +2,7 @@ import pickle
 import random
 import time
 import streamlit as st
-from PredictorFunctions import CorrosionPredictor
+from utils import CorrosionPredictor
 
 # Load the model
 with open('DNN_5D.pkl', 'rb') as inp:
