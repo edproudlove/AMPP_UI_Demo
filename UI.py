@@ -4,15 +4,14 @@ import time
 import streamlit as st
 from utils import CorrosionPredictor
 
-# Load the model
+# Load the DNN
 with open('DNN_5D.pkl', 'rb') as inp:
     CorrosionModel = pickle.load(inp)
 
-# Function to generate random values
 def generate_random_value(min_val, max_val):
     return random.uniform(min_val, max_val)
 
-# Initialize session state for the input fields if not already set
+# Init session state with random inputs for the fields if not already set
 if 'temperature' not in st.session_state:
     st.session_state.temperature = generate_random_value(0, 100)
 if 'pressure' not in st.session_state:
@@ -24,38 +23,56 @@ if 'flow_vel_val' not in st.session_state:
 if 'pipe_diam_value' not in st.session_state:
     st.session_state.pipe_diam_value = generate_random_value(0.01, 1)
 
+st.markdown("""
+    <style>
+    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
+    hr { margin-top: 0.5rem; margin-bottom: 0.5rem; border: 1px solid black; }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # Streamlit UI setup
 st.title("DNN Surrogate Leeds Model")
-st.subheader("Enter Input Conditions")
+st.subheader("Enter Input Conditions:")
+st.markdown("---", unsafe_allow_html=True)
 
-# Input fields with session state values (so user input is retained)
-st.session_state.temperature = st.number_input('Temperature (°C): 0 - 100', value=st.session_state.temperature, min_value=0.0, max_value=100.0)
-st.session_state.pressure = st.number_input('Pressure (Bar): 0.1 - 10', value=st.session_state.pressure, min_value=0.1, max_value=10.0)
-st.session_state.pH_val = st.number_input('pH: 5 - 6', value=st.session_state.pH_val, min_value=5.0, max_value=6.0)
-st.session_state.flow_vel_val = st.number_input('Flow Velocity (m/s): 0.1 - 10', value=st.session_state.flow_vel_val, min_value=0.1, max_value=10.0)
-st.session_state.pipe_diam_value = st.number_input('Pipe Diameter (m): 0.01 - 1', value=st.session_state.pipe_diam_value, min_value=0.01, max_value=1.0)
+def create_input_row(label_text, key, min_val, max_val):
+    """Create a row with a label and a number input aligned horizontally."""
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.markdown(f"<b><span style='font-size:1.1em;'>{label_text}</span></b>", unsafe_allow_html=True)
+    with col2:
+        st.session_state[key] = st.number_input(
+            label=label_text,
+            value=st.session_state[key],
+            min_value=min_val,
+            max_value=max_val,
+            label_visibility="collapsed"
+        )
+
+create_input_row("Temperature (°C): 0 - 100", 'temperature', 0.0, 100.0)
+create_input_row("Pressure (Bar): 0.1 - 10", 'pressure', 0.1, 10.0)
+create_input_row("pH: 5 - 6", 'pH_val', 5.0, 6.0)
+create_input_row("Flow Velocity (m/s): 0.1 - 10", 'flow_vel_val', 0.1, 10.0)
+create_input_row("Pipe Diameter (m): 0.01 - 1", 'pipe_diam_value', 0.01, 1.0)
+
+st.markdown("---", unsafe_allow_html=True)
 
 # Button to calculate corrosion rate
 if st.button('Calculate Corrosion Rate'):
-    start_time = time.time()
+    with st.spinner('Calculating...'):  
+        try:
+            temperature = st.session_state.temperature
+            pressure = st.session_state.pressure
+            pH_val = st.session_state.pH_val
+            flow_vel_val = st.session_state.flow_vel_val
+            pipe_diam_value = st.session_state.pipe_diam_value
 
-    try:
-        # Use the values stored in session state
-        temperature = st.session_state.temperature
-        pressure = st.session_state.pressure
-        pH_val = st.session_state.pH_val
-        flow_vel_val = st.session_state.flow_vel_val
-        pipe_diam_value = st.session_state.pipe_diam_value
-        
-        # Make the prediction using the model
-        corr_rate = CorrosionModel.predict_v2(P=pressure, T=temperature, d=pipe_diam_value, v=flow_vel_val, ph=pH_val)
+            # Make the prediction using the model
+            corr_rate = CorrosionModel.predict_v2(P=pressure, T=temperature, d=pipe_diam_value, v=flow_vel_val, ph=pH_val)
+            
+            # Display the output in Streamlit
+            st.success(f'Predicted Corrosion Rate: {corr_rate:.3f} mm/year')
 
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-
-        # Display the output in Streamlit
-        st.success(f'Corrosion Rate: {corr_rate:.3f} mm/year')
-        st.info(f'Response Time: {elapsed_time:.3f} seconds')
-
-    except Exception as e:
-        st.error(f'Error: {str(e)}')
+        except Exception as e:
+            st.error(f'Error: {str(e)}')
