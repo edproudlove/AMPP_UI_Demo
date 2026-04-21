@@ -1,8 +1,19 @@
+mport keras
+from keras.saving import saving_lib
+
+original_load_model = saving_lib.load_model
+
+def patched_load_model(*args, **kwargs):
+    kwargs["compile"] = False
+    return original_load_model(*args, **kwargs)
+
+saving_lib.load_model = patched_load_model
+
 import pickle
+from utils import CorrosionPredictor
 import random
 import time
 import streamlit as st
-from utils import CorrosionPredictor
 
 # Load the DNN
 with open('DNN_5D.pkl', 'rb') as inp:
