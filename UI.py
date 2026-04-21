@@ -51,7 +51,7 @@ def create_input_row(label_text, key, min_val, max_val):
         )
 
 create_input_row("Temperature (°C): 0 - 100", 'temperature', 0.0, 100.0)
-create_input_row("Pressure (Bar): 0.1 - 10", 'pressure', 0.1, 10.0)
+create_input_row("CO2 Partial Pressure (Bar): 0.1 - 10", 'pressure', 0.1, 10.0)
 create_input_row("pH: 5 - 6", 'pH_val', 5.0, 6.0)
 create_input_row("Flow Velocity (m/s): 0.1 - 10", 'flow_vel_val', 0.1, 10.0)
 create_input_row("Pipe Diameter (m): 0.01 - 1", 'pipe_diam_value', 0.01, 1.0)
